@@ -4,23 +4,27 @@
 2 - Obter o endereco do usuario pelo id
  */
 
-function obterUsuario(callback) {
-  setTimeout(function() {
-    return callback(null, {
-      id: 1,
-      nome: "Aladdin",
-      dataNascimento: new Date()
-    });
-  }, 1000);
+function obterUsuario() {
+  return new Promise(function resolvePromise(resolve, reject) {
+    setTimeout(function() {
+      return resolve({
+        id: 1,
+        nome: "Aladdin",
+        dataNascimento: new Date()
+      });
+    }, 1000);
+  });
 }
 
-function obterTelefone(idUsuario, callback) {
-  setTimeout(function() {
-    return callback(null, {
-      telefone: "1120484",
-      ddd: 84
-    });
-  }, 2000);
+function obterTelefone(idUsuario) {
+  return new Promise(function resolvePromise(resolve, reject) {
+    setTimeout(function() {
+      return resolve({
+        telefone: "1120484",
+        ddd: 84
+      });
+    }, 2000);
+  });
 }
 
 function obterEndereco(idUsuario, callback) {
@@ -32,26 +36,32 @@ function obterEndereco(idUsuario, callback) {
   }, 2000);
 }
 
-function resolverUsuario(erro, usuario) {
-  if (erro) {
-    console.log("erro ao recuperar usuario");
-    return;
-  }
-  console.log("usuario", usuario);
-  obterTelefone(usuario.id, (errorTelefone, telefone) => {
-    if (errorTelefone) {
-      console.log("erro ao recuperar telefone");
-      return;
-    }
-    console.log("telefone", telefone);
-    obterEndereco(usuario.id, (errorEndereco, endereco) => {
-      if (errorEndereco) {
-        console.log("erro ao recuperar endereço");
-        return;
-      }
-      console.log("endereco", endereco);
-    });
-  });
-}
+const util = require("util");
 
-obterUsuario(resolverUsuario);
+const obterEnderecoAsync = util.promisify(obterEndereco);
+
+obterUsuario()
+  .then(function(usuario) {
+    return obterTelefone(usuario.id).then(function(telefone) {
+      return {
+        usuario,
+        telefone
+      };
+    });
+  })
+  .then(function(resultado) {
+    const endereco = obterEnderecoAsync(resultado.usuario.id);
+    return endereco.then(function(result) {
+      return {
+        usuario: resultado.usuario,
+        telefone: resultado.telefone,
+        endereco: result
+      };
+    });
+  })
+  .then(function(resultado) {
+    console.log("resultado", resultado);
+  })
+  .catch(function(error) {
+    console.error("encontrou erro ao recuperar usuario");
+  });
