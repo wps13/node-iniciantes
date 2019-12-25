@@ -46,20 +46,14 @@ const util = require("util");
 
 const obterEnderecoAsync = util.promisify(obterEndereco);
 
-obterUsuario()
-  .then(usuario =>
-    obterTelefone(usuario.id).then(telefone => ({
-      usuario,
-      telefone
-    }))
-  )
-  .then(resultado => {
-    const enderecoPromise = obterEnderecoAsync(resultado.usuario.id);
-    return enderecoPromise.then(endereco => ({ ...resultado, endereco }));
-  })
-  .then(resultado => {
-    console.log("resultado", resultado);
-  })
-  .catch(error => {
+main();
+async function main() {
+  try {
+    const usuario = await obterUsuario();
+    const telefone = await obterTelefone(usuario.id);
+    const endereco = await obterEnderecoAsync(usuario.id);
+    console.log(usuario, telefone, endereco);
+  } catch (error) {
     console.error("encontrou erro ao recuperar usuario", error);
-  });
+  }
+}
