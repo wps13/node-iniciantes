@@ -5,35 +5,41 @@
  */
 
 function obterUsuario() {
-  return new Promise(function resolvePromise(resolve, reject) {
-    setTimeout(function() {
-      return resolve({
-        id: 1,
-        nome: "Aladdin",
-        dataNascimento: new Date()
-      });
-    }, 1000);
+  return new Promise((resolve, reject) => {
+    setTimeout(
+      () =>
+        resolve({
+          id: 1,
+          nome: "Aladdin",
+          dataNascimento: new Date()
+        }),
+      1000
+    );
   });
 }
 
 function obterTelefone(idUsuario) {
-  return new Promise(function resolvePromise(resolve, reject) {
-    setTimeout(function() {
-      return resolve({
-        telefone: "1120484",
-        ddd: 84
-      });
-    }, 2000);
+  return new Promise((resolve, reject) => {
+    setTimeout(
+      () =>
+        resolve({
+          telefone: "1120484",
+          ddd: 84
+        }),
+      2000
+    );
   });
 }
 
 function obterEndereco(idUsuario, callback) {
-  setTimeout(function() {
-    return callback(null, {
-      rua: "rua dos bobos",
-      numero: 1
-    });
-  }, 2000);
+  setTimeout(
+    () =>
+      callback(null, {
+        rua: "rua dos bobos",
+        numero: 1
+      }),
+    2000
+  );
 }
 
 const util = require("util");
@@ -41,27 +47,19 @@ const util = require("util");
 const obterEnderecoAsync = util.promisify(obterEndereco);
 
 obterUsuario()
-  .then(function(usuario) {
-    return obterTelefone(usuario.id).then(function(telefone) {
-      return {
-        usuario,
-        telefone
-      };
-    });
+  .then(usuario =>
+    obterTelefone(usuario.id).then(telefone => ({
+      usuario,
+      telefone
+    }))
+  )
+  .then(resultado => {
+    const enderecoPromise = obterEnderecoAsync(resultado.usuario.id);
+    return enderecoPromise.then(endereco => ({ ...resultado, endereco }));
   })
-  .then(function(resultado) {
-    const endereco = obterEnderecoAsync(resultado.usuario.id);
-    return endereco.then(function(result) {
-      return {
-        usuario: resultado.usuario,
-        telefone: resultado.telefone,
-        endereco: result
-      };
-    });
-  })
-  .then(function(resultado) {
+  .then(resultado => {
     console.log("resultado", resultado);
   })
-  .catch(function(error) {
-    console.error("encontrou erro ao recuperar usuario");
+  .catch(error => {
+    console.error("encontrou erro ao recuperar usuario", error);
   });
