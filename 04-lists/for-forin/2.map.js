@@ -2,7 +2,7 @@ const service = require("./service");
 
 Array.prototype.meuMap = function(callback) {
   const novoArrayMapeado = [];
-  for (let i = 0; i <= this.length - 1; i++) {
+  for (let i in this) {
     const resultado = callback(this[i]);
     novoArrayMapeado.push(resultado);
   }
