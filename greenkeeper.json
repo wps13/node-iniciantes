@@ -1,0 +1,13 @@
+{
+  "groups": {
+    "default": {
+      "packages": [
+        "02-sincronia/package.json",
+        "03-events/package.json",
+        "04-lists/for-forin/package.json",
+        "05-testes/01/package.json",
+        "06-cli/package.json"
+      ]
+    }
+  }
+}
