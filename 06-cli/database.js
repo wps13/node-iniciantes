@@ -38,7 +38,7 @@ class Database {
   async remover(id) {
     if (!id) return await this.escreverArquivo([]);
     const dados = await this.obterDadosArquivo();
-    const indice = dados.findIndex(item => item.id === parseInt(id));
+    const indice = dados.findIndex(item => parseInt(item.id) === parseInt(id));
     if (indice === -1) {
       throw Error("heroi nao encontrado");
     }
@@ -47,7 +47,7 @@ class Database {
   }
   async atualizar(id, novoDado) {
     const dados = await this.obterDadosArquivo();
-    const indice = dados.findIndex(item => item.id === parseInt(id));
+    const indice = dados.findIndex(item => parseInt(item.id) === parseInt(id));
     if (indice === -1) throw Error("o heroi informado nao existe");
     const atual = dados[indice];
     const objAtualizado = {
